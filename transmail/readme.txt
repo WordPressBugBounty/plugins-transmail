@@ -1,21 +1,21 @@
-=== ZeptoMail ===
-Contributors: ZeptoMail
+=== Zoho ZeptoMail ===
+Contributors: Zoho ZeptoMail
 Tags: mail,mailer,phpmailer,wp_mail,transactional email,zoho,zoho zeptomail,zoho transmail
 Donate link: none
 Requires at least: 4.8
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 3.1.4
+Stable tag: 3.2.0
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-ZeptoMail Plugin lets you configure your ZeptoMail account on your WordPress site enabling you to send transactional emails of your site via ZeptoMail API.
+Zoho ZeptoMail Plugin lets you configure your ZeptoMail account on your WordPress site enabling you to send transactional emails of your site via ZeptoMail API.
 
 == Description ==
 
-= ZeptoMail for WordPress =
+= Zoho ZeptoMail for WordPress =
 
-ZeptoMail (formerly TransMail) Plugin helps you to configure your ZeptoMail account in your WordPress site, to send notification emails from your website.
+Zoho ZeptoMail (formerly TransMail) Plugin helps you to configure your ZeptoMail account in your WordPress site, to send notification emails from your website.
 It is recommended to use authorized servers for sending transactional/ notification emails from websites, instead of using generic hosting servers. It is possible to misuse unauthorized and unauthenticated configuration and harm the reputation of your domain/ website when using generic servers. 
 This plugin can help to ensure that the transactional emails are sent from your account using ZeptoMail API's and do not end up in the Spam.
 
@@ -27,9 +27,16 @@ This plugin can help to ensure that the transactional emails are sent from your 
 == ADVANTAGES OF ZeptoMail PLUGIN ==
 - ZeptoMail plugin has customized the **PHPMailer’s** code library, used in WordPress for sending email.
 - By using **’wp_mail’** function of WordPress, ZeptoMail plugin handles the custom send mail action anywhere from the entire site, without having to change/ configure at every occurrence.
+- Zoho ZeptoMail advantage:
+-- Inbox placement
+-- Fast delivery
+-- Email segmentation
+-- Failed delivery logs
 
-== ZeptoMail API ==
-You can use the Send Mail token of any Mail Agent in your ZeptoMail account to send transactional emails from your site using ZeptoMail API. 
+
+== How is email sent using the plugin? ==
+
+You can configure multiple ZeptoMail Mail Agents in the plugin using their associated send mail tokens. You can use the Send Mail token of the Mail Agents in your ZeptoMail account to send transactional emails from your site using ZeptoMail API.
 
 == INSTALLATION ==
 1) Login to your self-hosted WordPress account and navigate to the ZeptoMail plugin Account Configuration page.
@@ -39,19 +46,22 @@ You can use the Send Mail token of any Mail Agent in your ZeptoMail account to s
 5) Enter the **Send Mail token** in the plugin configuration page. 
 6) Enter the From **Email Address** and From **Name** .
 7) Select the default **Email Format** you wish to send your transactional emails in.
-6) Click **Save** .
+6) Click **Save and test configuration** .
 7) Once the configuration is saved, the Plugin will be able to send emails from your website using ZeptoMail.
 
 == ZeptoMail PLUGIN PARAMETERS ==
-- **Domain** :The domain where your Zoho Account data resides.
-- **Send Mail token** :Send Mail token generated in the ZeptoMail Mail Agent you wish to configure in WordPress.
-- **From Email Address** :The Email address that will be used to send all the outgoing transactional emails from your website.
-- **From Name** :The Name that will be shown as the display name while sending all emails from your website.
+- **Hosted region** :The domain where your Zoho Account data resides.
 - **Email format** :Emails from the plugin will be sent in the chosen format by default.
+- **From Name** :The name that will be shown as the display name while sending all emails from your website.
+- **From Email Address** :The email address that will be used to send all the outgoing transactional emails from your website.
+- **Send mail token** :Send mail token generated in the ZeptoMail Mail Agent you wish to configure in WordPress.
+- **Logs limit** : Once the number of logs reaches the configured limit, the older logs will be deleted. 
+
 
 == ZeptoMail PLUGIN TEST EMAIL ==
 
 After configuration, you can test the plugin. Navigate to the ZeptoMail plugin - Test Email page in your Website settings.
+- **From address** : The from email address using which you want to send the test email. 
 - **To** : Email address of the recipient.
 - **Subject** : Subject of the email.
 - **Content** :The message or body of the email.
@@ -84,6 +94,7 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 == Screenshots ==
 1. Configure Account(screenshot-1.png)
 2. Test Mail(screenshot-2.png)
+3. Failed email logs(screenshot-3.png)
 
 == Changelog ==
 = 1.0.1 =
@@ -126,7 +137,11 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 * bug fix on attachment failure
 = 3.1.4 =
 * bug fix on warning and attachment failure case.
+= 3.2.0 =
+* Support for multiple mail agent configuration.
+* Failed logs and retry option support.
 
 == Upgrade Notice ==
 none
+
 
