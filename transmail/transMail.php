@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.0
+Version: 3.2.1
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -273,8 +273,8 @@ function transmail_faild_mail_callback() {
                                                     <ul class="zm-page-content-failed-log-filter-list">
                                                         <li class="zm-page-content-failed-log-filter-list-item" data-filter="ALL">ALL</li>
                                                         <li class="zm-page-content-failed-log-filter-list-item" data-filter="SERR_157">SERR_157</li>
+                                                        <li class="zm-page-content-failed-log-filter-list-item" data-filter="LE_102">LE_102</li>
                                                         <li class="zm-page-content-failed-log-filter-list-item" data-filter="SM_111">SM_111</li>
-                                                        <li class="zm-page-content-failed-log-filter-list-item" data-filter="SM_147">SM_147</li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@ function transmail_faild_mail_callback() {
                                         <td><div class="zm-page-content-table-msg"><?php echo $row['error_code'] ?></div></td>
                                         <td><div class="zm-page-content-table-msg"><?php echo $row['error_description'] ?></div></td>
                                         <td>
-                                            <button class="retry-button no-border no-background" title="Resend log" data-id="<?php echo $row['id']; ?>" 
+                                            <button class="retry-button no-border no-background" title="Resend email" data-id="<?php echo $row['id']; ?>" 
                                             <?php if(empty($connected_emails) && !$connected): ?>
                                                 disabled
                                             <?php endif; ?>>
@@ -1074,11 +1074,11 @@ if(!function_exists('wp_mail')) {
        //echo '<div class="error"><p><strong>'.esc_html__('dynamicForm is not empty').'</strong></p></div>'."\n";
        //echo '<div class="error"><p><strong>'.esc_html__($dynamicFrom[0]).'</strong></p></div>'."\n";
   }
-  else {
-      $fromAddress['address'] = get_option('transmail_from_email_id');
-      echo '<div class="error"><p><strong>'.esc_html__('dynamicForm is empty').'</strong></p></div>'."\n";
-      echo '<div class="error"><p><strong>dynam 0 fromaddreess'.esc_html__($fromAddress['address']).'</strong></p></div>'."\n";
-  }
+//   else {
+//       $fromAddress['address'] = get_option('transmail_from_email_id');
+//       echo '<div class="error"><p><strong>'.esc_html__('dynamicForm is empty').'</strong></p></div>'."\n";
+//       echo '<div class="error"><p><strong>dynam 0 fromaddreess'.esc_html__($fromAddress['address']).'</strong></p></div>'."\n";
+//   }
   //echo '<div class="error"><p><strong>from address' . esc_html($fromAddress['address']) . '</strong></p></div>' . "\n";
   
   // Retrieve the JSON string from the 'transmail_additional_mail_agents' option
@@ -1089,8 +1089,23 @@ if(!function_exists('wp_mail')) {
   if (isset($headers['Authorization'])) {
       $token = $headers['Authorization'];
   }
-  else if (is_array($email_agents)) {
-      // Define the email ID you want to get the token for
+  else if (is_array($email_agents)) {	
+     if(!isset($fromAddress['address'])) {
+        //echo "is not set";
+        foreach ($email_agents as $email => $details) {
+            foreach ($details as $agent) {
+                // Check if the mail agent is marked as the default
+                if (isset($agent['isDefault']) && $agent['isDefault'] === true) {
+                    $fromAddress['address'] = $email;    // Set the default email address
+                    $fromAddress['name'] = $agent['fromName'];  // Set the corresponding name
+                    $token = $agent['Token'];
+                    break; // Exit both loops after finding the default
+                }
+            }
+        }
+     }
+     else {
+// Define the email ID you want to get the token for
       $target_email = $fromAddress['address'];
       
       // Check if the target email exists in the array
@@ -1108,13 +1123,17 @@ if(!function_exists('wp_mail')) {
       } else {
           //echo 'Email not found in the data.';
   
-          foreach ($email_agents as $details) {
-              if (!empty($details)) {
-                  $first_entry = reset($details);
-                  $token = $first_entry['Token'];
-                  break; // Exit the loop after setting the token
-              }
-          }
+            foreach ($email_agents as $email => $details) {
+                foreach ($details as $agent) {
+                    // Check if the mail agent is marked as the default
+                    if (isset($agent['isDefault']) && $agent['isDefault'] === true) {
+                        $fromAddress['address'] = $email;    // Set the default email address
+                        $fromAddress['name'] = $agent['fromName'];  // Set the corresponding name
+                        $token = $agent['Token'];
+                        break; // Exit both loops after finding the default
+                    }
+                }
+            }
   
           if ($token) {
               //echo 'Email not found in the data. Using the first available token:<br>';
@@ -1123,6 +1142,8 @@ if(!function_exists('wp_mail')) {
               echo 'No tokens available in the data.';
           }
       }
+     }
+      
   }
   //error_log('from name:'. $fromAddress['name']);
   /*
