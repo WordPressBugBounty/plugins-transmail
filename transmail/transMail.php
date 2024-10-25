@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.1
+Version: 3.2.2
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -606,6 +606,7 @@ $connection_status = json_decode($connection_details, true);
                             <option value="zoho.com.au" <?php if(get_option('transmail_domain_name') == "zoho.com.au"){?>selected="true"<?php }?>>zeptomail.zoho.com.au</option>
                             <option value="zohocloud.ca" <?php if(get_option('transmail_domain_name') == "zohocloud.ca"){?>selected="true"<?php }?>>zeptomail.zohocloud.ca</option>
                             <option value="zoho.sa" <?php if(get_option('transmail_domain_name') == "zoho.sa"){?>selected="true"<?php }?>>zeptomail.zoho.sa</option>
+                            <option value="zoho.jp" <?php if(get_option('transmail_domain_name') == "zoho.jp"){?>selected="true"<?php }?>>zeptomail.zoho.jp</option>
                         </select><br>
                         <small class="form-text">The region where your ZeptoMail account is hosted. The URL displayed on logging in.</small>
                     </div>
