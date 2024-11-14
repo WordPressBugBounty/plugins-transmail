@@ -207,7 +207,7 @@ html,
 
 .form-row-group-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
     
 }
@@ -261,12 +261,16 @@ html,
 }
 
 .form-row-group {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
     gap: 16px;
     position: relative;
     max-width: 500px;
     min-width: 500px;
+}
+.form-row-group--without-gap {
+    gap: 0px;
+    flex-direction: column;
 }
 
 .form-row-group-title{
@@ -325,6 +329,7 @@ html,
     left: 12px;
     width: 15px;
     height: 15px;
+    margin-top: 6px;
 }
 
 .delete-button:hover {
@@ -586,3 +591,4 @@ html,
     visibility: visible;
     opacity: 1;
 }
+

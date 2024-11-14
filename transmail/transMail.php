@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.2
+Version: 3.2.3
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -932,6 +932,7 @@ if(!function_exists('wp_mail')) {
         
       if ( !is_array( $headers ) ) {
           $tempheaders = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
+          $headers = array('');
       } else {
           $tempheaders = $headers;
       }
@@ -1063,7 +1064,7 @@ if(!function_exists('wp_mail')) {
         $dynfrom['address'] = sanitize_email($dynad);
         //echo '<div class="error"><p><strong>dynform'.esc_html__($dynfrom['address']).'</strong></p></div>'."\n";
         if($dynpos >0) {
-          $dynfrom['name'] = substr($dynamicFrom[0],0,$dynpos-1);
+          $dynfrom['name'] = substr($dynamicFrom[0],0,$dynpos);
           $fromAddress['name'] = $dynfrom['name'];
         }
         $fromAddress['address'] = $dynfrom['address'];
