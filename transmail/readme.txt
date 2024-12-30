@@ -5,7 +5,7 @@ Donate link: none
 Requires at least: 4.8
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 3.2.3
+Stable tag: 3.2.4
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,6 +146,9 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 * Support provided for JP DC.
 = 3.2.3 =
 * Error handling and bug fixes.
+= 3.2.4 =
+* Bug fixes on warnings.
+
 
 == Upgrade Notice ==
 none

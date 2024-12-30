@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.3
+Version: 3.2.4
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -1040,7 +1040,8 @@ if(!function_exists('wp_mail')) {
                                 
     // Use the data as needed
     //print_r($json_data);
-
+    if (is_array($json_data)) {
+    
     $keys = array_keys($json_data);
 
     //echo "json_Data: " .$json_string;
@@ -1050,6 +1051,7 @@ if(!function_exists('wp_mail')) {
     if (isset($keys) && isset($keys[$from_email])) {
         //echo " inside the from email";
         $fromAddress['name'] = $keys[$from_email]['fromName'];
+    }
     }
     //$fromAddress['name'] = get_option('transmail_from_name');
   }
