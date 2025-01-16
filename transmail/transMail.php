@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.4
+Version: 3.2.5
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -1336,7 +1336,9 @@ if(!function_exists('wp_mail')) {
       //wp_send_json_success(array('status' => 'mail_sent', 'message' => 'Email sent successfully.'));
     return true;  
   } else {
-    update_option('transmail_test_mail_case', $responseSending['body'], false);
+    	if(!is_wp_error( $responseSending )) {
+    		update_option('transmail_test_mail_case', $responseSending['body'], false);
+    	}
     //echo "http codE:  " .$http_code;
       // Decode the JSON string into an associative array
       $responseArray = json_decode($responseBody, true);
