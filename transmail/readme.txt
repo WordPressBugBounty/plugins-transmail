@@ -5,7 +5,7 @@ Donate link: none
 Requires at least: 4.8
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 3.2.5
+Stable tag: 3.2.6
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,7 +150,8 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 * Bug fixes on warnings.
 = 3.2.5 =
 * Error handling and bug fixes.
-
+= 3.2.6 =
+* Fixes on security vulnerabilities.
 
 
 == Upgrade Notice ==

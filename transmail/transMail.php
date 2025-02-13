@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.5
+Version: 3.2.6
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -239,7 +239,7 @@ function transmail_faild_mail_callback() {
        <meta charset="UTF-8">
        <title>Zoho Mail</title>
    </head>
-    <form method="post" enctype="multipart/form-data" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+<form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"], ENT_QUOTES, 'UTF-8'); ?>">
                <?php wp_nonce_field('transmail_send_mail_nonce'); ?>
                <body>
                   <div class="zm-page">
@@ -286,16 +286,18 @@ function transmail_faild_mail_callback() {
                         if ($results) {
                             foreach ($results as $row) {
                         ?>  
-                                    <tr id="row-<?php echo $row['id']; ?>">
+				<tr id="row-<?php echo esc_attr($row['id']); ?>">
                                         <td>
                                             <div class="zm-page-content-table-row-checkbox">
-                                                <input type="checkbox" class="row-checkbox" data-id="<?php echo $row['id']; ?>">
+                                                <input type="checkbox" class="row-checkbox" data-id="<?php echo esc_attr($row['id']); ?>">
                                             </div>
                                         </td>
-                                        <td><div class="zm-page-content-table-msg"><?php echo $row['failed_at'] ?></div></td>
-                                        <td><div class="zm-page-content-table-msg"><?php echo $row['email_address'] ?></div></td>
-                                        <td><div class="zm-page-content-table-msgs"><?php echo $row['email_subject'] ?></div></td>
-                                        <td class="zm-page-content-table-tdd"><div class="zm-page-content-table-msgs"><?php echo $row['email_body'] ?></div></td>
+                                        <td><div class="zm-page-content-table-msg"><?php echo esc_html($row['failed_at']); ?></div></td>
+                                        <td><div class="zm-page-content-table-msg"><?php echo esc_html(validate_email($row['email_address'])); ?></div></td>
+                                        <td><div class="zm-page-content-table-msgs"><?php echo esc_html($row['email_subject']); ?></div></td>
+                                        <td class="zm-page-content-table-tdd">
+    					    <div class="zm-page-content-table-msgs"><?php echo wp_kses_post($row['email_body']); ?></div>
+					</td>
                                         <td>
                                             <div class="zm-page-content-table-msg">
                                                 <?php
@@ -316,7 +318,7 @@ function transmail_faild_mail_callback() {
                                                     //}
 
                                                     if($att_count > 0) {
-                                                        ?><span><?php echo $att_count;?> Attachments</span>
+                                                        ?><span><?php echo intval($att_count); ?> Attachments</span>
                                                         <i title="File does not exist. The attachment may be unavailable or missing during retry." style="color:red;">&#9432;</i>
                                                     <?php
                                                     }
@@ -327,10 +329,10 @@ function transmail_faild_mail_callback() {
                                                 ?>
                                             </div>
                                         </td>
-                                        <td><div class="zm-page-content-table-msg"><?php echo $row['error_code'] ?></div></td>
-                                        <td><div class="zm-page-content-table-msg"><?php echo $row['error_description'] ?></div></td>
+                                        <td><div class="zm-page-content-table-msg"><?php echo esc_html($row['error_code']); ?></div></td>
+                                        <td><div class="zm-page-content-table-msg"><?php echo wp_kses_post($row['error_description']); ?></div></td>
                                         <td>
-                                            <button class="retry-button no-border no-background" title="Resend email" data-id="<?php echo $row['id']; ?>" 
+                                            <button class="retry-button no-border no-background" title="Resend email" data-id="<?php echo intval($row['id']); ?>">
                                             <?php if(empty($connected_emails) && !$connected): ?>
                                                 disabled
                                             <?php endif; ?>>
@@ -339,7 +341,7 @@ function transmail_faild_mail_callback() {
                                             </button>
                                         </td>
                                         <td>
-                                            <button class="delete-button no-border no-background" title="Delete log" data-id="<?php echo $row['id']; ?>">
+                                            <button class="delete-button no-border no-background" title="Delete log" data-id="<?php echo intval($row['id']); ?>">
                                             <div class="zm-page-content-trash-icon">
                                             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                                 viewBox="0 0 14 14" style="width:16px;" fill="#777777" style="enable-background:new 0 0 14 14;" xml:space="preserve" fill="#777777">
@@ -437,6 +439,42 @@ function update_log_limit($transmail_max_log_limit) {
     }
 }
 
+     
+	function validate_email($email) {
+	    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : false;
+	}
+
+	function validate_domain($domain) {
+	    return filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) ? $domain : false;
+	}
+
+	function validate_client_id($input) {
+	    return preg_match('/^[a-z0-9.]+$/', $input) ? $input : false;
+	}
+
+	function validate_client_secret($secret) {
+	    return preg_match('/^[a-z0-9]$/', $secret) ? $secret : false;
+	}
+
+	function validate_url($url) {
+	    return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+	}
+
+	function validate_content_type($input) {
+	    $allowed_values = ['html', 'plaintext'];
+	    return in_array(strtolower($input), $allowed_values, true) ? strtolower($input) : false;
+	}
+	
+	function validate_from_name($input) {
+	    // Allow letters, numbers, spaces, and basic special chars (.-_)
+	    $input = trim($input);
+	    if (preg_match('/^[a-zA-Z0-9 ._-]{1,50}$/', $input)) {
+		return $input;
+	    }
+	    return false;
+	}
+
+
 function transmail_settings_callback() {
   
   if (isset($_POST['transmail_submit']) && !empty($_POST)) {
@@ -444,8 +482,8 @@ function transmail_settings_callback() {
     if (!wp_verify_nonce($nonce, 'transmail_settings_nonce')) {
         echo '<div class="error"><p><strong>'.esc_html__('Reload the page again').'</strong></p></div>'."\n";
     } else {
-        $transmail_domain_name = sanitize_text_field($_POST['transmail_domain_name']);
-        $transmail_content_type = sanitize_text_field($_POST['transmail_content_type']);
+        $transmail_domain_name = validate_domain(sanitize_text_field($_POST['transmail_domain_name']));
+        $transmail_content_type = validate_content_type(sanitize_text_field($_POST['transmail_content_type']));
         $transmail_max_log_limit = absint($_POST['transmail_max_log_limit']);
         if ( $transmail_max_log_limit < 1 ) {
             $transmail_max_log_limit = 1;
@@ -474,8 +512,8 @@ function transmail_settings_callback() {
     $json_data = array();
     $errors = array();
     for ($i = 1; $i <= $tempDataCount; $i++) {
-        $fromName = isset($_POST["transmail_from_name_$i"]) ? sanitize_text_field($_POST["transmail_from_name_$i"]) : '';
-        $fromEmail = isset($_POST["transmail_from_email_id_$i"]) ? sanitize_email($_POST["transmail_from_email_id_$i"]) : '';
+        $fromName = isset($_POST["transmail_from_name_$i"]) ? validate_from_name(sanitize_text_field($_POST["transmail_from_name_$i"])) : '';
+        $fromEmail = isset($_POST["transmail_from_email_id_$i"]) ? validate_email(sanitize_email($_POST["transmail_from_email_id_$i"])) : '';
         $token = isset($_POST["transmail_send_mail_token_$i"]) ? sanitize_text_field($_POST["transmail_send_mail_token_$i"]) : '';
 
         if ($fromEmail) { 
@@ -707,11 +745,16 @@ $connection_status = json_decode($connection_details, true);
                             if($length < 1){
                                 echo '<div class="error"><p><strong>'.esc_html__('Account not Configured').'</strong></p></div>'."\n";
                             }
-                            $from_address = sanitize_email($_POST['transmail_test_from_address']);
-                            $toAddressTest = sanitize_email($_POST['transmail_to_address']);
-                            $subjectTest = sanitize_text_field($_POST['transmail_subject']);
-                            $contentTest = sanitize_text_field($_POST['transmail_content']);
+                            $from_address = validate_email(sanitize_email($_POST['transmail_test_from_address']));
+                            $toAddressTest = validate_email(sanitize_email($_POST['transmail_to_address']));
     
+    			    $subjectTest = isset($_POST['transmail_subject']) ? wp_kses_post($_POST['transmail_subject']) : '';
+		            $contentTest = isset($_POST['transmail_content']) ? wp_kses_post(($_POST['transmail_content'])) : '';
+
+			    if (!$from_address || !$toAddressTest || !$subjectTest || !$contentTest) {
+				 die('Invalid input detected.');
+			    }
+			    
                             $json_string = get_option('transmail_additional_mail_agents');
     
                             $json_data = json_decode(base64_decode($json_string), true);
@@ -749,7 +792,7 @@ $connection_status = json_decode($connection_details, true);
                                 }
                                 echo '<div class="error"><p><strong>'.esc_html__('Mail Sending Failed').'</strong></p></div>'."\n";
                                 foreach ($errors as $error) {
-                                    echo '<div class="error"><p><strong>Error: '.esc_html($error['reason']).'</strong></p></div>'."\n";
+                                    echo '<div class="error"><p><strong>Error: ' . esc_html(isset($error['reason']) ? $error['reason'] : 'Unknown error') . '</strong></p></div>' . "\n";
                                 }
                             }        
                         }
@@ -765,7 +808,7 @@ $connection_status = json_decode($connection_details, true);
                <title>Zoho Mail</title>
            </head>
 
-           <form method="post" enctype="multipart/form-data" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+           <form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"], ENT_QUOTES, 'UTF-8'); ?>">
                <?php wp_nonce_field('transmail_send_mail_nonce'); ?>
                <body>
                   <div class="zm-page">
@@ -785,7 +828,8 @@ $connection_status = json_decode($connection_details, true);
                                 <?php                           
                                 if (!empty($connected_emails)) {
                                     foreach ($connected_emails as $email) {
-                                        echo '<option value="' . esc_attr($email) . '">' . esc_html($email) . '</option>';
+                                        $email_sanitized = isset($email) && is_string($email) ? trim($email) : 'Unknown';
+					echo '<option value="' . esc_attr($email_sanitized) . '">' . esc_html($email_sanitized) . '</option>';
                                     }
                                 } else {
                                     echo '<option value="">No account configured</option>';
@@ -892,7 +936,7 @@ if(!function_exists('wp_mail')) {
     function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) { 
       
       $atts = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
-      
+
       if ( isset( $atts['to'] ) ) {
           $to = $atts['to'];
       }
@@ -921,6 +965,9 @@ if(!function_exists('wp_mail')) {
       }
   
       $attachments = implode("\n", $attachments);
+      
+    $allowed_upload_dir = wp_upload_dir();
+    $allowed_dir = realpath($allowed_upload_dir['basedir']);
   
     $content_type = null;
     $cc = $bcc = $reply_to = array();
@@ -1063,7 +1110,7 @@ if(!function_exists('wp_mail')) {
       $dynpos = strpos($dynamicFrom[0], '<');
       if($dynpos !== false) {
         $dynad = substr($dynamicFrom[0], $dynpos+1, strlen($dynamicFrom[0])-$dynpos-2);
-        $dynfrom['address'] = sanitize_email($dynad);
+        $dynfrom['address'] = validate_email(sanitize_email($dynad));
         //echo '<div class="error"><p><strong>dynform'.esc_html__($dynfrom['address']).'</strong></p></div>'."\n";
         if($dynpos >0) {
           $dynfrom['name'] = substr($dynamicFrom[0],0,$dynpos);
@@ -1214,10 +1261,10 @@ if(!function_exists('wp_mail')) {
       $pos = strpos($t, '<');
       if($pos !== false) {
         $ad = substr($t, $pos+1, strlen($t)-$pos-2);
-        $toa['address'] = sanitize_email($ad);
+        $toa['address'] = validate_email(sanitize_email($ad));
         $toa['name'] = substr($t,0,$pos-1);
     } else {
-        $toa['address'] = sanitize_email($t);
+        $toa['address'] = validate_email(sanitize_email($t));
     }
     $toe['email_address'] = $toa;
     $tos[$count] = $toe;
@@ -1240,20 +1287,24 @@ if(!function_exists('wp_mail')) {
       $count = 0;
   
       foreach ($attachments as $attfile) {
-          if (file_exists($attfile)) {
+          if (file_exists($attfile)) {        
+           $real_path = realpath($attfile); 
+           if ($real_path && strpos($real_path, $allowed_dir) === 0 && file_exists($real_path) && is_readable($real_path)) {
               $attachmentupload = array(
                   'name' => basename($attfile),
                   'mime_type' => mime_content_type($attfile),
                   'content' => base64_encode(file_get_contents($attfile))
               );
               $attachmentJSONArr[$count] = $attachmentupload;
-              $relative_path = str_replace(ABSPATH, '', $attfile); // Remove absolute path part
+              $relative_path = str_replace(ABSPATH, '', $attfile);
               $attachment_paths[] = $relative_path;
               $count = $count + 1;
+            }
           } else {
               error_log("Attachment file does not exist: " . $attfile);
           }
       }
+      
       
       //error_log("attachments: " . json_encode($attachmentJSONArr, JSON_PRETTY_PRINT));
       $data['attachments'] = $attachmentJSONArr;
