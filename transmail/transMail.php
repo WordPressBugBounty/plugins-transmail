@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.6
+Version: 3.2.7
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -293,7 +293,7 @@ function transmail_faild_mail_callback() {
                                             </div>
                                         </td>
                                         <td><div class="zm-page-content-table-msg"><?php echo esc_html($row['failed_at']); ?></div></td>
-                                        <td><div class="zm-page-content-table-msg"><?php echo esc_html(validate_email($row['email_address'])); ?></div></td>
+                                        <td><div class="zm-page-content-table-msg"><?php echo esc_html(transmail_validate_email($row['email_address'])); ?></div></td>
                                         <td><div class="zm-page-content-table-msgs"><?php echo esc_html($row['email_subject']); ?></div></td>
                                         <td class="zm-page-content-table-tdd">
     					    <div class="zm-page-content-table-msgs"><?php echo wp_kses_post($row['email_body']); ?></div>
@@ -440,32 +440,24 @@ function update_log_limit($transmail_max_log_limit) {
 }
 
      
-	function validate_email($email) {
+	function transmail_validate_email($email) {
 	    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : false;
 	}
 
-	function validate_domain($domain) {
+	function transmail_validate_domain($domain) {
 	    return filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) ? $domain : false;
 	}
 
-	function validate_client_id($input) {
-	    return preg_match('/^[a-z0-9.]+$/', $input) ? $input : false;
-	}
-
-	function validate_client_secret($secret) {
-	    return preg_match('/^[a-z0-9]$/', $secret) ? $secret : false;
-	}
-
-	function validate_url($url) {
+	function transmail_validate_url($url) {
 	    return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
 	}
 
-	function validate_content_type($input) {
+	function transmail_validate_content_type($input) {
 	    $allowed_values = ['html', 'plaintext'];
 	    return in_array(strtolower($input), $allowed_values, true) ? strtolower($input) : false;
 	}
 	
-	function validate_from_name($input) {
+	function transmail_validate_from_name($input) {
 	    // Allow letters, numbers, spaces, and basic special chars (.-_)
 	    $input = trim($input);
 	    if (preg_match('/^[a-zA-Z0-9 ._-]{1,50}$/', $input)) {
@@ -482,8 +474,8 @@ function transmail_settings_callback() {
     if (!wp_verify_nonce($nonce, 'transmail_settings_nonce')) {
         echo '<div class="error"><p><strong>'.esc_html__('Reload the page again').'</strong></p></div>'."\n";
     } else {
-        $transmail_domain_name = validate_domain(sanitize_text_field($_POST['transmail_domain_name']));
-        $transmail_content_type = validate_content_type(sanitize_text_field($_POST['transmail_content_type']));
+        $transmail_domain_name = transmail_validate_domain(sanitize_text_field($_POST['transmail_domain_name']));
+        $transmail_content_type = transmail_validate_content_type(sanitize_text_field($_POST['transmail_content_type']));
         $transmail_max_log_limit = absint($_POST['transmail_max_log_limit']);
         if ( $transmail_max_log_limit < 1 ) {
             $transmail_max_log_limit = 1;
@@ -512,8 +504,8 @@ function transmail_settings_callback() {
     $json_data = array();
     $errors = array();
     for ($i = 1; $i <= $tempDataCount; $i++) {
-        $fromName = isset($_POST["transmail_from_name_$i"]) ? validate_from_name(sanitize_text_field($_POST["transmail_from_name_$i"])) : '';
-        $fromEmail = isset($_POST["transmail_from_email_id_$i"]) ? validate_email(sanitize_email($_POST["transmail_from_email_id_$i"])) : '';
+        $fromName = isset($_POST["transmail_from_name_$i"]) ? transmail_validate_from_name(sanitize_text_field($_POST["transmail_from_name_$i"])) : '';
+        $fromEmail = isset($_POST["transmail_from_email_id_$i"]) ? transmail_validate_email(sanitize_email($_POST["transmail_from_email_id_$i"])) : '';
         $token = isset($_POST["transmail_send_mail_token_$i"]) ? sanitize_text_field($_POST["transmail_send_mail_token_$i"]) : '';
 
         if ($fromEmail) { 
@@ -745,8 +737,8 @@ $connection_status = json_decode($connection_details, true);
                             if($length < 1){
                                 echo '<div class="error"><p><strong>'.esc_html__('Account not Configured').'</strong></p></div>'."\n";
                             }
-                            $from_address = validate_email(sanitize_email($_POST['transmail_test_from_address']));
-                            $toAddressTest = validate_email(sanitize_email($_POST['transmail_to_address']));
+                            $from_address = transmail_validate_email(sanitize_email($_POST['transmail_test_from_address']));
+                            $toAddressTest = transmail_validate_email(sanitize_email($_POST['transmail_to_address']));
     
     			    $subjectTest = isset($_POST['transmail_subject']) ? wp_kses_post($_POST['transmail_subject']) : '';
 		            $contentTest = isset($_POST['transmail_content']) ? wp_kses_post(($_POST['transmail_content'])) : '';
@@ -1110,7 +1102,7 @@ if(!function_exists('wp_mail')) {
       $dynpos = strpos($dynamicFrom[0], '<');
       if($dynpos !== false) {
         $dynad = substr($dynamicFrom[0], $dynpos+1, strlen($dynamicFrom[0])-$dynpos-2);
-        $dynfrom['address'] = validate_email(sanitize_email($dynad));
+        $dynfrom['address'] = transmail_validate_email(sanitize_email($dynad));
         //echo '<div class="error"><p><strong>dynform'.esc_html__($dynfrom['address']).'</strong></p></div>'."\n";
         if($dynpos >0) {
           $dynfrom['name'] = substr($dynamicFrom[0],0,$dynpos);
@@ -1261,10 +1253,10 @@ if(!function_exists('wp_mail')) {
       $pos = strpos($t, '<');
       if($pos !== false) {
         $ad = substr($t, $pos+1, strlen($t)-$pos-2);
-        $toa['address'] = validate_email(sanitize_email($ad));
+        $toa['address'] = transmail_validate_email(sanitize_email($ad));
         $toa['name'] = substr($t,0,$pos-1);
     } else {
-        $toa['address'] = validate_email(sanitize_email($t));
+        $toa['address'] = transmail_validate_email(sanitize_email($t));
     }
     $toe['email_address'] = $toa;
     $tos[$count] = $toe;
@@ -1531,5 +1523,3 @@ function handle_delete_selected_logs() {
 
     wp_die();
 }
-
-
