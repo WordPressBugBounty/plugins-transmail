@@ -3,9 +3,9 @@ Contributors: Zoho ZeptoMail
 Tags: mail,mailer,phpmailer,wp_mail,transactional email,zoho,zoho zeptomail,zoho transmail
 Donate link: none
 Requires at least: 4.8
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 5.6
-Stable tag: 3.2.7
+Stable tag: 3.2.8
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,9 +154,10 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 * Fixes on security vulnerabilities.
 = 3.2.7 =
 * Bug fixes on fetal error.
+= 3.2.8 =
+* Bug fixes on From name language support.
 
 == Upgrade Notice ==
 none
-
 
 

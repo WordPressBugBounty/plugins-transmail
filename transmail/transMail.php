@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.7
+Version: 3.2.8
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -239,7 +239,7 @@ function transmail_faild_mail_callback() {
        <meta charset="UTF-8">
        <title>Zoho Mail</title>
    </head>
-<form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"], ENT_QUOTES, 'UTF-8'); ?>">
+<form method="post" enctype="multipart/form-data" action="<?php echo esc_url($_SERVER["REQUEST_URI"]); ?>">
                <?php wp_nonce_field('transmail_send_mail_nonce'); ?>
                <body>
                   <div class="zm-page">
@@ -458,9 +458,9 @@ function update_log_limit($transmail_max_log_limit) {
 	}
 	
 	function transmail_validate_from_name($input) {
-	    // Allow letters, numbers, spaces, and basic special chars (.-_)
+	    // Allow Unicode letters, numbers, spaces, and common special characters
 	    $input = trim($input);
-	    if (preg_match('/^[a-zA-Z0-9 ._-]{1,50}$/', $input)) {
+	    if (preg_match('/^[\p{L}\p{N} ._-]{1,50}$/u', $input)) {
 		return $input;
 	    }
 	    return false;
@@ -614,7 +614,8 @@ $connection_status = json_decode($connection_details, true);
     echo 'var tempData = ' . json_encode($temp_data) . ';';
     echo '</script>';
 ?>
-    <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" onsubmit="return validateForm()">
+
+    <form method="post" action="<?php echo esc_url($_SERVER["REQUEST_URI"]);?>" onsubmit="return validateForm()">
         <?php wp_nonce_field('transmail_settings_nonce'); ?>
         <div class="zm-page">
             <div class="zm-page-header">
@@ -800,7 +801,7 @@ $connection_status = json_decode($connection_details, true);
                <title>Zoho Mail</title>
            </head>
 
-           <form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"], ENT_QUOTES, 'UTF-8'); ?>">
+           <form method="post" enctype="multipart/form-data" action="<?php echo esc_url($_SERVER["REQUEST_URI"]); ?>">
                <?php wp_nonce_field('transmail_send_mail_nonce'); ?>
                <body>
                   <div class="zm-page">
