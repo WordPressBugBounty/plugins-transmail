@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.2.8
+Version: 3.2.9
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -1380,24 +1380,36 @@ if(!function_exists('wp_mail')) {
       //wp_send_json_success(array('status' => 'mail_sent', 'message' => 'Email sent successfully.'));
     return true;  
   } else {
-    	if(!is_wp_error( $responseSending )) {
-    		update_option('transmail_test_mail_case', $responseSending['body'], false);
-    	}
-    //echo "http codE:  " .$http_code;
-      // Decode the JSON string into an associative array
-      $responseArray = json_decode($responseBody, true);
-  
-      if($responseSending['body'] != '') {
-                //echo "resp array: " . $responseArray;
-            // Check if the response data was decoded successfully and contains the expected structure
-            if (isset($responseArray['error']['details'][0]['code']) && isset($responseArray['error']['details'][0]['message'])) {
-                $errorCode = $responseArray['error']['details'][0]['code'];
-                $errorMessage = $responseArray['error']['details'][0]['message'];
-                //echo "to address: " . $to[0] . PHP_EOL;
-                $attachment_paths_json = !empty($attachment_paths) ? $attachment_paths : '';
-                insert_failed_email($from_email,$to[0], $subject, $message, $responseArray['error']['details'], $attachment_paths_json);
-            }  
-       }
+    	 if (is_wp_error($responseSending)) {
+		$error_message = $responseSending->get_error_message();
+		update_option('transmail_test_mail_case', $error_message, false);
+
+		do_action('wp_mail_failed', $responseSending);
+		return false;
+	    }
+    
+	    $responseBody = wp_remote_retrieve_body($responseSending);
+	    update_option('transmail_test_mail_case', $responseBody, false);
+    
+	    $responseArray = json_decode($responseBody, true);
+
+	    if (!empty($responseBody)) {
+		if (isset($responseArray['error']['details'][0]['code']) && isset($responseArray['error']['details'][0]['message'])) {
+		    $errorCode    = $responseArray['error']['details'][0]['code'];
+		    $errorMessage = $responseArray['error']['details'][0]['message'];
+
+		    $attachment_paths_json = !empty($attachment_paths) ? $attachment_paths : '';
+		    insert_failed_email(
+		        $from_email,
+		        $to[0],
+		        $subject,
+		        $message,
+		        $responseArray['error']['details'],
+		        $attachment_paths_json
+		    );
+		}
+	    }
+
         return false;
   }
   
