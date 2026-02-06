@@ -5,7 +5,7 @@ Donate link: none
 Requires at least: 4.8
 Tested up to: 6.8
 Requires PHP: 5.6
-Stable tag: 3.2.9
+Stable tag: 3.3.3
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,12 +36,12 @@ This plugin can help to ensure that the transactional emails are sent from your 
 
 == How is email sent using the plugin? ==
 
-You can configure multiple ZeptoMail Mail Agents in the plugin using their associated send mail tokens. You can use the Send Mail token of the Mail Agents in your ZeptoMail account to send transactional emails from your site using ZeptoMail API.
+You can configure multiple ZeptoMail Agents in the plugin using their associated send mail tokens. You can use the Send Mail token of the Agents in your ZeptoMail account to send transactional emails from your site using ZeptoMail API.
 
 == INSTALLATION ==
 1) Login to your self-hosted WordPress account and navigate to the ZeptoMail plugin Account Configuration page.
 2) From the **Domain** section, pick the region where your ZeptoMail account is hosted. 
-3) Login to your ZeptoMail account and access the relevant **Mail Agent** .
+3) Login to your ZeptoMail account and access the relevant **Agent** .
 4) Copy your existing **Send Mail token** or generate a new one from the **SMTP & API Info** section.
 5) Enter the **Send Mail token** in the plugin configuration page. 
 6) Enter the From **Email Address** and From **Name** .
@@ -54,7 +54,7 @@ You can configure multiple ZeptoMail Mail Agents in the plugin using their assoc
 - **Email format** :Emails from the plugin will be sent in the chosen format by default.
 - **From Name** :The name that will be shown as the display name while sending all emails from your website.
 - **From Email Address** :The email address that will be used to send all the outgoing transactional emails from your website.
-- **Send mail token** :Send mail token generated in the ZeptoMail Mail Agent you wish to configure in WordPress.
+- **Send mail token** :Send mail token generated in the ZeptoMail Agent you wish to configure in WordPress.
 - **Logs limit** : Once the number of logs reaches the configured limit, the older logs will be deleted. 
 
 
@@ -83,9 +83,9 @@ Sending emails through ZeptoMail is subjective to our Usage Policy restrictions.
 
 In order for your emails to be sent in the HTML format, you need to choose HTML from the Mail format dropdown in the ZeptoMail plugin configuration page. [Learn more](https://www.zoho.com/zeptomail/help/wordpress-plugin.html#alink3) 
 
-4) **Can I link more than one Mail Agent with the plugin?**
+4) **Can I link more than one Agent with the plugin?**
 
-As of now, you can only configure one ZeptoMail Mail Agent with the plugin. You can only send emails through the chosen Mail Agent and its associated domain, using the plugin. 
+As of now, you can only configure one ZeptoMail Agent with the plugin. You can only send emails through the chosen Agent and its associated domain, using the plugin. 
 
 5) **Where do I go for more assistance with ZeptoMail plugin?**
 
@@ -158,6 +158,14 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 * Bug fixes on From name language support.
 = 3.2.9 =
 * Bug fixes on wp error.
+= 3.3.0 =
+* Security improvements for admin-only operations.
+= 3.3.1 =
+* Bug fix on warnings.
+= 3.3.2 = 
+* Security enhancements and bug fix.
+= 3.3.3 = 
+* Content changes.
 
 == Upgrade Notice ==
 none
