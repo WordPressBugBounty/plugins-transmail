@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Zoho ZeptoMail
-Version: 3.3.3
+Version: 3.3.4
 Plugin URI: https://zeptomail.zoho.com/
 Author: Zoho Mail
 Author URI: https://www.zoho.com/zeptomail/
@@ -1038,7 +1038,6 @@ if (!function_exists('wp_mail')) {
 
                 $name    = trim($name);
                 $content = trim($content);
-                $content_type = null;
                 $from = array();
                 if (stripos($name, 'content-type') !== false) {
                     $name = 'content-type';
@@ -1094,6 +1093,9 @@ if (!function_exists('wp_mail')) {
         }
 
         $content_type = apply_filters('wp_mail_content_type', $content_type);
+        if (empty($content_type)) {
+            $content_type = get_option('transmail_content_type') === 'html' ? 'text/html' : 'text/plain';
+        }
         $data = array();
         $token = '';
         $fromAddress = array();
@@ -1159,8 +1161,6 @@ if (!function_exists('wp_mail')) {
                     foreach ($email_agents as $email => $details) {
                         foreach ($details as $agent) {
                             if (isset($agent['isDefault']) && $agent['isDefault'] === true) {
-                                $fromAddress['address'] = $email; 
-                                $fromAddress['name'] = $agent['fromName'];
                                 $token = $agent['Token'];
                                 break; 
                             }
@@ -1271,7 +1271,7 @@ if (!function_exists('wp_mail')) {
             $attachedFiles[] = $fileData['name'];
         }
 
-        if ($content_type == 'text/html' || get_option('transmail_content_type') == 'html') {
+        if ($content_type == 'text/html') {
             $data['htmlbody'] = $message;
         } else {
             $data['textbody'] = $message;

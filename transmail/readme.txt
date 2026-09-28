@@ -3,9 +3,9 @@ Contributors: Zoho ZeptoMail
 Tags: mail,mailer,phpmailer,wp_mail,transactional email,zoho,zoho zeptomail,zoho transmail
 Donate link: none
 Requires at least: 4.8
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.3.3
+Stable tag: 3.3.4
 License: BSD
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -159,13 +159,17 @@ You can refer our help documentation for detailed instruction about ZeptoMail an
 = 3.2.9 =
 * Bug fixes on wp error.
 = 3.3.0 =
-* Security improvements for admin-only operations.
+* Security vulnerability fixed - CVE-2025-67972.
 = 3.3.1 =
 * Bug fix on warnings.
 = 3.3.2 = 
 * Security enhancements and bug fix.
 = 3.3.3 = 
-* Content changes.
+* Content changes
+= 3.3.4 = 
+* Fixed email Content-Type handling for plaintext and HTML emails.
+* Fixed dynamic From address and From name handling.
+* Updated WordPress compatibility to 7.1.
 
 == Upgrade Notice ==
 none
